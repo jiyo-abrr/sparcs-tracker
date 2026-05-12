@@ -161,11 +161,27 @@ export default function Dashboard() {
           )}
 
           {tab === "dashboard" && (
-            <ProductTable
-              products={products}
-              onViewQR={(p) => setQrProduct(p)}
-              onDelete={handleDelete}
-            />
+            <>
+              <ProductTable
+                products={products}
+                onViewQR={(p) => setQrProduct(p)}
+                onDelete={handleDelete}
+              />
+
+              <Card className="border-dashed border-orange-300/70 bg-orange-50/40 max-w-md">
+                <CardHeader className="pb-2">
+                  <CardTitle className="flex items-center gap-2 text-sm text-orange-800">
+                    <AlertOctagon size={16} /> Demo: Unknown Product QR
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="flex flex-col items-center gap-3 pt-0">
+                  <p className="text-xs text-muted-foreground text-center">
+                    Scan this from another screen to trigger the &quot;Product Not Detected&quot; flow.
+                  </p>
+                  <DemoUnknownQR size={180} />
+                </CardContent>
+              </Card>
+            </>
           )}
 
           {tab === "register" && (
