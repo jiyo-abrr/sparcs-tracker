@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
@@ -12,7 +13,27 @@ import QRScanner from "@/components/QRScanner";
 import DemoUnknownQR from "@/components/DemoUnknownQR";
 import { Product } from "@/lib/types";
 import { useProducts, deleteProduct } from "@/lib/store";
-import { AlertOctagon, Package, ScanLine, LayoutDashboard, PackagePlus, Flag } from "lucide-react";
+import { AlertOctagon, Clock, Package, ScanLine, LayoutDashboard, PackagePlus, Flag } from "lucide-react";
+
+function useLiveClock(): string {
+  const [now, setNow] = useState<Date | null>(null);
+  useEffect(() => {
+    setNow(new Date());
+    const id = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  if (!now) return "";
+  return now.toLocaleString("en-PH", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  });
+}
 
 const STATUS_VARIANT: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
   VALID:   "default",
@@ -27,6 +48,8 @@ export default function Dashboard() {
   const products = useProducts();
   const [tab, setTab] = useState<Tab>("dashboard");
   const [qrProduct, setQrProduct] = useState<Product | null>(null);
+  const [showDemoQR, setShowDemoQR] = useState(false);
+  const clock = useLiveClock();
 
   function handleDelete(id: string) {
     if (!confirm("Delete this product and all its movement history?")) return;
@@ -50,15 +73,14 @@ export default function Dashboard() {
       <div className="md:hidden flex flex-col min-h-screen">
         {/* Welcome banner */}
         <div className="px-4 pt-4 pb-3">
-          <div className="rounded-2xl bg-primary text-primary-foreground px-5 py-4">
-            <p className="text-[10px] font-medium opacity-75 uppercase tracking-wide mb-0.5">
+          <div className="rounded-2xl bg-primary text-primary-foreground px-5 py-4 space-y-1">
+            <p className="text-[10px] font-medium opacity-75 uppercase tracking-wide">
               Welcome to SPARCS
             </p>
             <h2 className="text-lg font-bold leading-tight">Supply Chain Tracker</h2>
-            <p className="text-xs opacity-80 mt-0.5">
-              {products.length === 0
-                ? "No products registered yet."
-                : `${products.length} product${products.length !== 1 ? "s" : ""} tracked`}
+            <p className="text-xs opacity-85 flex items-center gap-1.5 font-mono">
+              <Clock size={11} className="opacity-80" />
+              <span suppressHydrationWarning>{clock || "—"}</span>
             </p>
             {reportCount > 0 && (
               <div className="flex items-center gap-1.5 mt-2 text-xs font-medium bg-white/20 rounded-full px-2.5 py-1 w-fit">
@@ -135,17 +157,16 @@ export default function Dashboard() {
           {/* Welcome banner */}
           {tab === "dashboard" && (
             <div className="rounded-2xl bg-primary text-primary-foreground px-5 py-5 flex items-center justify-between gap-4">
-              <div>
-                <p className="text-xs font-medium opacity-75 uppercase tracking-wide mb-1">
+              <div className="space-y-1">
+                <p className="text-xs font-medium opacity-75 uppercase tracking-wide">
                   Welcome to SPARCS
                 </p>
                 <h2 className="text-xl font-bold leading-tight">
                   Product Supply Chain Tracker
                 </h2>
-                <p className="text-sm opacity-80 mt-1">
-                  {products.length === 0
-                    ? "No products registered yet."
-                    : `${products.length} product${products.length !== 1 ? "s" : ""} tracked`}
+                <p className="text-sm opacity-85 flex items-center gap-2 font-mono">
+                  <Clock size={13} className="opacity-80" />
+                  <span suppressHydrationWarning>{clock || "—"}</span>
                 </p>
                 {reportCount > 0 && (
                   <div className="flex items-center gap-1.5 mt-2 text-xs font-medium bg-white/20 rounded-full px-3 py-1 w-fit">
@@ -162,25 +183,22 @@ export default function Dashboard() {
 
           {tab === "dashboard" && (
             <>
+              <div className="flex justify-end">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5 border-orange-300 text-orange-700 hover:bg-orange-50 hover:text-orange-800"
+                  onClick={() => setShowDemoQR(true)}
+                >
+                  <AlertOctagon size={14} /> Demo: Unknown Product QR
+                </Button>
+              </div>
+
               <ProductTable
                 products={products}
                 onViewQR={(p) => setQrProduct(p)}
                 onDelete={handleDelete}
               />
-
-              <Card className="border-dashed border-orange-300/70 bg-orange-50/40 max-w-md">
-                <CardHeader className="pb-2">
-                  <CardTitle className="flex items-center gap-2 text-sm text-orange-800">
-                    <AlertOctagon size={16} /> Demo: Unknown Product QR
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="flex flex-col items-center gap-3 pt-0">
-                  <p className="text-xs text-muted-foreground text-center">
-                    Scan this from another screen to trigger the &quot;Product Not Detected&quot; flow.
-                  </p>
-                  <DemoUnknownQR size={180} />
-                </CardContent>
-              </Card>
             </>
           )}
 
@@ -220,6 +238,23 @@ export default function Dashboard() {
           )}
         </div>
       </div>
+
+      {/* ── Demo Unknown Product QR dialog ── */}
+      <Dialog open={showDemoQR} onOpenChange={setShowDemoQR}>
+        <DialogContent className="w-[calc(100%-2rem)] sm:max-w-sm rounded-xl">
+          <DialogHeader>
+            <DialogTitle className="text-base flex items-center gap-2 text-orange-800">
+              <AlertOctagon size={16} /> Demo: Unknown Product QR
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col items-center gap-3 py-2">
+            <p className="text-xs text-muted-foreground text-center">
+              Scan this from another screen to trigger the &quot;Product Not Detected&quot; flow.
+            </p>
+            <DemoUnknownQR size={220} />
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* ── QR Code dialog (desktop) ── */}
       <Dialog open={!!qrProduct} onOpenChange={(o) => !o && setQrProduct(null)}>
