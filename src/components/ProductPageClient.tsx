@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -153,10 +154,19 @@ export default function ProductPageClient({ productId }: Props) {
             onClick={() => router.push("/")}
             className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
-            <ArrowLeft size={16} /> Back
+            <ArrowLeft size={16} />
           </button>
 
-          <h1 className="font-semibold text-sm truncate flex-1 text-center">{title}</h1>
+          <div className="flex items-center gap-2 min-w-0 flex-1 justify-center">
+            <Image
+              src="/bir-logo.png"
+              alt="BIR"
+              width={24}
+              height={24}
+              className="shrink-0"
+            />
+            <h1 className="font-semibold text-sm truncate">{title}</h1>
+          </div>
 
           <div className="flex items-center gap-1">
             <Button size="icon" variant="ghost" title="Show QR" onClick={() => setShowQR(true)}>

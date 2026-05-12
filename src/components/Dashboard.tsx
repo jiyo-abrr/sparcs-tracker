@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,7 +14,7 @@ import QRScanner from "@/components/QRScanner";
 import DemoUnknownQR from "@/components/DemoUnknownQR";
 import { Product } from "@/lib/types";
 import { useProducts, deleteProduct } from "@/lib/store";
-import { AlertOctagon, Clock, Package, ScanLine, LayoutDashboard, PackagePlus, Flag } from "lucide-react";
+import { AlertOctagon, Clock, ScanLine, LayoutDashboard, PackagePlus, Flag } from "lucide-react";
 
 function useLiveClock(): string {
   const [now, setNow] = useState<Date | null>(null);
@@ -73,21 +74,32 @@ export default function Dashboard() {
       <div className="md:hidden flex flex-col min-h-screen">
         {/* Welcome banner */}
         <div className="px-4 pt-4 pb-3">
-          <div className="rounded-2xl bg-primary text-primary-foreground px-5 py-4 space-y-1">
-            <p className="text-[10px] font-medium opacity-75 uppercase tracking-wide">
-              Welcome to SPARCS
-            </p>
-            <h2 className="text-lg font-bold leading-tight">Supply Chain Tracker</h2>
-            <p className="text-xs opacity-85 flex items-center gap-1.5 font-mono">
-              <Clock size={11} className="opacity-80" />
-              <span suppressHydrationWarning>{clock || "—"}</span>
-            </p>
-            {reportCount > 0 && (
-              <div className="flex items-center gap-1.5 mt-2 text-xs font-medium bg-white/20 rounded-full px-2.5 py-1 w-fit">
-                <Flag size={11} />
-                {reportCount} report{reportCount !== 1 ? "s" : ""}
-              </div>
-            )}
+          <div className="relative overflow-hidden rounded-2xl bg-primary text-primary-foreground px-5 py-4">
+            <Image
+              src="/bir-logo.png"
+              alt=""
+              aria-hidden
+              width={96}
+              height={96}
+              priority
+              className="pointer-events-none select-none absolute -right-4 top-1/2 -translate-y-1/2 opacity-20"
+            />
+            <div className="relative z-10 space-y-1">
+              <p className="text-[10px] font-medium opacity-75 uppercase tracking-wide">
+                Bureau of Internal Revenue
+              </p>
+              <h2 className="text-lg font-bold leading-tight">SPARCS Tracker</h2>
+              <p className="text-xs opacity-85 flex items-center gap-1.5 font-mono">
+                <Clock size={11} className="opacity-80" />
+                <span suppressHydrationWarning>{clock || "—"}</span>
+              </p>
+              {reportCount > 0 && (
+                <div className="flex items-center gap-1.5 mt-1 text-xs font-medium bg-white/20 rounded-full px-2.5 py-1 w-fit">
+                  <Flag size={11} />
+                  {reportCount} report{reportCount !== 1 ? "s" : ""}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -112,12 +124,21 @@ export default function Dashboard() {
       <div className="hidden md:block pb-6">
         {/* Header */}
         <header className="border-b sticky top-0 z-20 bg-background/95 backdrop-blur">
-          <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <Package className="text-primary" size={22} />
-              <div>
-                <h1 className="font-bold text-base leading-none">SPARCS Tracker</h1>
-                <p className="text-[11px] text-muted-foreground">Supply Chain Monitor</p>
+          <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3 min-w-0">
+              <Image
+                src="/bir-logo.png"
+                alt="Bureau of Internal Revenue"
+                width={40}
+                height={40}
+                className="shrink-0"
+                priority
+              />
+              <div className="min-w-0">
+                <p className="text-[10px] uppercase tracking-wide text-muted-foreground font-medium leading-none">
+                  Bureau of Internal Revenue · Philippines
+                </p>
+                <h1 className="font-bold text-base leading-tight mt-1">SPARCS Tracker</h1>
               </div>
             </div>
 
@@ -142,13 +163,22 @@ export default function Dashboard() {
         <div className="max-w-7xl mx-auto px-4 py-4 space-y-5">
           {/* Welcome banner */}
           {tab === "dashboard" && (
-            <div className="rounded-2xl bg-primary text-primary-foreground px-5 py-5 flex items-center justify-between gap-4">
-              <div className="space-y-1">
+            <div className="relative overflow-hidden rounded-2xl bg-primary text-primary-foreground px-6 py-6">
+              <Image
+                src="/bir-logo.png"
+                alt=""
+                aria-hidden
+                width={150}
+                height={150}
+                priority
+                className="pointer-events-none select-none absolute -right-10 top-1/2 -translate-y-1/2 opacity-20"
+              />
+              <div className="relative z-10 space-y-1 max-w-2xl">
                 <p className="text-xs font-medium opacity-75 uppercase tracking-wide">
-                  Welcome to SPARCS
+                  Bureau of Internal Revenue
                 </p>
                 <h2 className="text-xl font-bold leading-tight">
-                  Product Supply Chain Tracker
+                  SPARCS — Product Supply Chain Tracker
                 </h2>
                 <p className="text-sm opacity-85 flex items-center gap-2 font-mono">
                   <Clock size={13} className="opacity-80" />
@@ -160,9 +190,6 @@ export default function Dashboard() {
                     {reportCount} report{reportCount !== 1 ? "s" : ""}
                   </div>
                 )}
-              </div>
-              <div className="shrink-0 opacity-20">
-                <Package size={56} />
               </div>
             </div>
           )}
