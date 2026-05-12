@@ -38,13 +38,18 @@ export default function ProductPageClient({ productId }: Props) {
 
   async function handleReport(reason: ReportReason) {
     if (!product || reportState !== "idle") return;
+    const id = product.uid_details.unique_id;
     setReportState("submitting");
     await new Promise((r) => setTimeout(r, 1400));
     setReportState("success");
     await new Promise((r) => setTimeout(r, 1200));
-    addReport(product.uid_details.unique_id, reason);
+    addReport(id, reason);
     setShowReport(false);
     setReportState("idle");
+    router.replace(`/products/${id}`);
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   }
 
   function handleReportDialogChange(open: boolean) {
