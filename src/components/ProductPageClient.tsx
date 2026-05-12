@@ -2,16 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import ProductDetail from "@/components/ProductDetail";
-import AddLocationForm from "@/components/AddLocationForm";
 import QRCodeDisplay from "@/components/QRCodeDisplay";
 import { addReport, deleteProduct, useHasHydrated, useProduct } from "@/lib/store";
 import { REPORT_REASONS, type ReportReason } from "@/lib/types";
-import { ArrowLeft, ChevronDown, ChevronUp, Flag, QrCode, Trash2 } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Flag, Loader2, QrCode, Trash2 } from "lucide-react";
 
 const STATUS_VARIANT: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
   VALID:   "default",
@@ -27,9 +25,9 @@ export default function ProductPageClient({ productId }: Props) {
   const router = useRouter();
   const product = useProduct(productId);
   const hydrated = useHasHydrated();
-  const [showLogForm, setShowLogForm] = useState(false);
   const [showQR, setShowQR] = useState(false);
   const [showReport, setShowReport] = useState(false);
+  const [reportState, setReportState] = useState<"idle" | "submitting" | "success">("idle");
 
   function handleDelete() {
     if (!product) return;
@@ -38,10 +36,22 @@ export default function ProductPageClient({ productId }: Props) {
     router.push("/");
   }
 
-  function handleReport(reason: ReportReason) {
-    if (!product) return;
+  async function handleReport(reason: ReportReason) {
+    if (!product || reportState !== "idle") return;
+    setReportState("submitting");
+    await new Promise((r) => setTimeout(r, 1200));
     addReport(product.uid_details.unique_id, reason);
-    setShowReport(false);
+    setReportState("success");
+    setTimeout(() => {
+      setShowReport(false);
+      setReportState("idle");
+    }, 1600);
+  }
+
+  function handleReportDialogChange(open: boolean) {
+    if (!open && reportState === "submitting") return;
+    setShowReport(open);
+    if (!open) setReportState("idle");
   }
 
   if (!hydrated) {
@@ -80,13 +90,6 @@ export default function ProductPageClient({ productId }: Props) {
           <h1 className="font-semibold text-sm truncate flex-1 text-center">{title}</h1>
 
           <div className="flex items-center gap-1">
-            <Button
-              size="icon" variant="ghost" title="Report issue"
-              className="text-orange-600 hover:text-orange-700"
-              onClick={() => setShowReport(true)}
-            >
-              <Flag size={18} />
-            </Button>
             <Button size="icon" variant="ghost" title="Show QR" onClick={() => setShowQR(true)}>
               <QrCode size={18} />
             </Button>
@@ -104,56 +107,65 @@ export default function ProductPageClient({ productId }: Props) {
       <div className="max-w-2xl mx-auto px-4 py-5 space-y-6">
         <ProductDetail product={product} />
 
-        <Separator />
-
-        <div className="rounded-xl border overflow-hidden">
-          <button
-            type="button"
-            onClick={() => setShowLogForm((v) => !v)}
-            className="w-full flex items-center justify-between px-4 py-3.5 text-sm font-semibold bg-muted/40 hover:bg-muted/60 transition-colors"
-          >
-            Log New Movement
-            {showLogForm ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-          </button>
-          {showLogForm && (
-            <div className="px-4 py-4 border-t">
-              <AddLocationForm
-                productId={product.uid_details.unique_id}
-                onAdded={() => {
-                  setShowLogForm(false);
-                  window.scrollTo({ top: 0, behavior: "smooth" });
-                }}
-              />
-            </div>
-          )}
-        </div>
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full gap-2 border-orange-400/60 text-orange-700 hover:bg-orange-50 hover:text-orange-800 h-12"
+          onClick={() => setShowReport(true)}
+        >
+          <Flag size={16} /> Report Issue
+        </Button>
       </div>
 
-      <Dialog open={showReport} onOpenChange={setShowReport}>
+      <Dialog open={showReport} onOpenChange={handleReportDialogChange}>
         <DialogContent className="w-[calc(100%-2rem)] sm:max-w-sm rounded-xl">
           <DialogHeader>
             <DialogTitle className="text-base flex items-center gap-2">
               <Flag size={16} className="text-orange-600" /> Report Issue
             </DialogTitle>
           </DialogHeader>
-          <div className="py-2 space-y-2">
-            <p className="text-sm text-muted-foreground">
-              Select the reason for reporting this product. This will flag it for review.
-            </p>
-            <div className="flex flex-col gap-2 pt-1">
-              {REPORT_REASONS.map((reason) => (
-                <Button
-                  key={reason}
-                  variant="outline"
-                  className="justify-start gap-2 h-auto py-3"
-                  onClick={() => handleReport(reason)}
-                >
-                  <Flag size={14} className="text-orange-600 shrink-0" />
-                  <span className="text-sm">{reason}</span>
-                </Button>
-              ))}
+
+          {reportState === "submitting" && (
+            <div className="flex flex-col items-center justify-center gap-3 py-10">
+              <Loader2 size={36} className="text-orange-600 animate-spin" />
+              <p className="text-sm text-muted-foreground">Submitting report…</p>
             </div>
-          </div>
+          )}
+
+          {reportState === "success" && (
+            <div className="flex flex-col items-center justify-center gap-3 py-10 text-center">
+              <div className="rounded-full bg-green-100 p-3 animate-in zoom-in-50 duration-300">
+                <CheckCircle2 size={36} className="text-green-600" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-base font-semibold text-foreground">Thank you for reporting!</p>
+                <p className="text-xs text-muted-foreground">
+                  Your report has been submitted for review.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {reportState === "idle" && (
+            <div className="py-2 space-y-2">
+              <p className="text-sm text-muted-foreground">
+                Select the reason for reporting this product. This will flag it for review.
+              </p>
+              <div className="flex flex-col gap-2 pt-1">
+                {REPORT_REASONS.map((reason) => (
+                  <Button
+                    key={reason}
+                    variant="outline"
+                    className="justify-start gap-2 h-auto py-3"
+                    onClick={() => handleReport(reason)}
+                  >
+                    <Flag size={14} className="text-orange-600 shrink-0" />
+                    <span className="text-sm">{reason}</span>
+                  </Button>
+                ))}
+              </div>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
 

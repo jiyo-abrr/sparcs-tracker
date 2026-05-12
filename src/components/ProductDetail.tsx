@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
   MapPin, Package, Building2, Hash, FileText, Clock, Factory,
-  AlertTriangle, Flag, Truck, Globe,
+  AlertTriangle, Truck, Globe,
 } from "lucide-react";
 import LocationMap from "./LocationMap";
 
@@ -43,7 +43,7 @@ interface Props {
 }
 
 export default function ProductDetail({ product }: Props) {
-  const { uid_details, origin_details, logistics_details, product_specs, reports } = product;
+  const { uid_details, origin_details, logistics_details, product_specs } = product;
   const history = logistics_details.movement_history;
 
   return (
@@ -138,43 +138,6 @@ export default function ProductDetail({ product }: Props) {
           )}
         </div>
 
-      </section>
-
-      <Separator />
-
-      {/* ── Reports ── */}
-      <section>
-        <h3 className="text-sm font-semibold flex items-center gap-1.5 mb-3">
-          <Flag size={14} />
-          Reports
-          <span className="ml-auto text-xs text-muted-foreground font-normal">
-            {reports.length} report{reports.length !== 1 ? "s" : ""}
-          </span>
-        </h3>
-
-        {reports.length > 0 ? (
-          <div className="space-y-2">
-            {reports.map((r) => (
-              <div
-                key={r.id}
-                className="flex items-start gap-2.5 rounded-lg border border-orange-400/40 bg-orange-50 px-3 py-2.5"
-              >
-                <AlertTriangle size={14} className="text-orange-600 shrink-0 mt-0.5" />
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-semibold text-orange-800">{r.reason}</p>
-                  <p className="text-xs text-orange-700/80 mt-0.5">
-                    {new Date(r.timestamp).toLocaleString('en-PH')}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="flex flex-col items-center gap-2 py-6 text-center border rounded-lg bg-muted/20">
-            <Flag size={24} className="text-muted-foreground/40" />
-            <p className="text-sm text-muted-foreground">No reports filed.</p>
-          </div>
-        )}
       </section>
 
       <Separator />
