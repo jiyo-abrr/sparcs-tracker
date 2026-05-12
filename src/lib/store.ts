@@ -4,7 +4,7 @@ import { useSyncExternalStore } from "react";
 import { Product, MovementEntry, ProductReport, ProductStatus, ReportReason } from "@/lib/types";
 import { INITIAL_PRODUCTS } from "@/data/products";
 
-const STORAGE_KEY = "sparcs:products:v1";
+const STORAGE_KEY = "sparcs:products:v2";
 const CHANGE_EVENT = "sparcs:products-changed";
 
 function readStore(): Product[] {
