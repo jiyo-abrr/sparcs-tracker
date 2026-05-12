@@ -9,9 +9,10 @@ import ProductForm from "@/components/ProductForm";
 import ProductTable from "@/components/ProductTable";
 import QRCodeDisplay from "@/components/QRCodeDisplay";
 import QRScanner from "@/components/QRScanner";
+import DemoUnknownQR from "@/components/DemoUnknownQR";
 import { Product } from "@/lib/types";
 import { useProducts, deleteProduct } from "@/lib/store";
-import { Package, ScanLine, LayoutDashboard, PackagePlus, Flag } from "lucide-react";
+import { AlertOctagon, Package, ScanLine, LayoutDashboard, PackagePlus, Flag } from "lucide-react";
 
 const STATUS_VARIANT: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
   VALID:   "default",
@@ -69,8 +70,8 @@ export default function Dashboard() {
         </div>
 
         {/* QR scanner — fills remaining space */}
-        <div className="flex-1 px-4 pb-6">
-          <Card className="h-full">
+        <div className="flex-1 px-4 pb-6 space-y-4">
+          <Card>
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-base">
                 <ScanLine size={18} /> Scan Product QR
@@ -78,6 +79,20 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent>
               <QRScanner onScan={(id) => router.push(`/products/${id}`)} />
+            </CardContent>
+          </Card>
+
+          <Card className="border-dashed border-orange-300/70 bg-orange-50/40">
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-sm text-orange-800">
+                <AlertOctagon size={16} /> Demo: Unknown Product QR
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col items-center gap-3 pt-0">
+              <p className="text-xs text-muted-foreground text-center">
+                Scan this from another screen to trigger the &quot;Product Not Detected&quot; flow.
+              </p>
+              <DemoUnknownQR size={160} />
             </CardContent>
           </Card>
         </div>
@@ -160,7 +175,7 @@ export default function Dashboard() {
           )}
 
           {tab === "scan" && (
-            <div className="max-w-lg mx-auto">
+            <div className="max-w-lg mx-auto space-y-4">
               <Card>
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center gap-2 text-base">
@@ -169,6 +184,20 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   <QRScanner onScan={(id) => router.push(`/products/${id}`)} />
+                </CardContent>
+              </Card>
+
+              <Card className="border-dashed border-orange-300/70 bg-orange-50/40">
+                <CardHeader className="pb-2">
+                  <CardTitle className="flex items-center gap-2 text-sm text-orange-800">
+                    <AlertOctagon size={16} /> Demo: Unknown Product QR
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="flex flex-col items-center gap-3 pt-0">
+                  <p className="text-xs text-muted-foreground text-center">
+                    Scan this from another screen to trigger the &quot;Product Not Detected&quot; flow.
+                  </p>
+                  <DemoUnknownQR size={200} />
                 </CardContent>
               </Card>
             </div>

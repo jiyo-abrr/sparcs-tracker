@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Product } from "@/lib/types";
+import { Product, getMarketKind } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,6 +20,21 @@ function ReportBadge({ product }: { product: Product }) {
   return (
     <span className="inline-flex items-center gap-0.5 text-[10px] font-medium text-orange-600 border border-orange-400/40 rounded px-1 py-0.5">
       <Flag size={9} /> {product.reports.length} report{product.reports.length !== 1 ? "s" : ""}
+    </span>
+  );
+}
+
+function MarketBadge({ product }: { product: Product }) {
+  const kind = getMarketKind(product.product_specs.intended_market);
+  return (
+    <span
+      className={
+        kind === "EXPORT"
+          ? "inline-flex items-center text-[10px] font-bold tracking-wider rounded-full px-2 py-0.5 bg-purple-100 text-purple-800 border border-purple-300"
+          : "inline-flex items-center text-[10px] font-bold tracking-wider rounded-full px-2 py-0.5 bg-blue-100 text-blue-800 border border-blue-300"
+      }
+    >
+      {kind}
     </span>
   );
 }
@@ -57,9 +72,12 @@ export default function ProductTable({ products, onViewQR, onDelete }: Props) {
                   </p>
                   <p className="text-xs text-muted-foreground font-mono">{uid}</p>
                 </div>
-                <Badge variant={STATUS_VARIANT[p.status] ?? "outline"} className="shrink-0 mt-0.5">
-                  {p.status}
-                </Badge>
+                <div className="flex flex-col items-end gap-1 shrink-0 mt-0.5">
+                  <Badge variant={STATUS_VARIANT[p.status] ?? "outline"}>
+                    {p.status}
+                  </Badge>
+                  <MarketBadge product={p} />
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
@@ -120,6 +138,7 @@ export default function ProductTable({ products, onViewQR, onDelete }: Props) {
               <TableHead>Brand / Variant</TableHead>
               <TableHead>Manufacturer</TableHead>
               <TableHead>Destination</TableHead>
+              <TableHead>Market</TableHead>
               <TableHead>Status</TableHead>
               <TableHead><MapPin size={13} className="inline mr-1" />Moves</TableHead>
               <TableHead>Reports</TableHead>
@@ -152,6 +171,7 @@ export default function ProductTable({ products, onViewQR, onDelete }: Props) {
                     </div>
                   </TableCell>
                   <TableCell className="text-sm">{p.logistics_details.intended_destination}</TableCell>
+                  <TableCell><MarketBadge product={p} /></TableCell>
                   <TableCell>
                     <Badge variant={STATUS_VARIANT[p.status] ?? "outline"}>{p.status}</Badge>
                   </TableCell>

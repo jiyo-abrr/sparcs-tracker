@@ -1,6 +1,6 @@
 "use client";
 
-import { Product } from "@/lib/types";
+import { Product, getMarketKind } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -56,9 +56,25 @@ export default function ProductDetail({ product }: Props) {
           </h2>
           <p className="text-xs text-muted-foreground font-mono mt-0.5">{uid_details.unique_id}</p>
         </div>
-        <Badge variant={STATUS_VARIANT[product.status] ?? "outline"} className="shrink-0 mt-1 text-sm px-3 py-1">
-          {product.status}
-        </Badge>
+        <div className="flex flex-col items-end gap-1.5 shrink-0 mt-1">
+          <Badge variant={STATUS_VARIANT[product.status] ?? "outline"} className="text-sm px-3 py-1">
+            {product.status}
+          </Badge>
+          {(() => {
+            const kind = getMarketKind(product_specs.intended_market);
+            return (
+              <span
+                className={
+                  kind === "EXPORT"
+                    ? "text-[10px] font-bold tracking-wider rounded-full px-2.5 py-1 bg-purple-100 text-purple-800 border border-purple-300"
+                    : "text-[10px] font-bold tracking-wider rounded-full px-2.5 py-1 bg-blue-100 text-blue-800 border border-blue-300"
+                }
+              >
+                {kind}
+              </span>
+            );
+          })()}
+        </div>
       </div>
 
       <Separator />

@@ -82,7 +82,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     created_at: "2026-05-09T06:00:00Z",
   },
   {
-    status: "FLAGGED",
+    status: "VALID",
     uid_details: {
       unique_id: "PH-2026-ALC-339901",
       activation_date: "2026-05-08T08:00:00Z",
@@ -102,25 +102,23 @@ export const INITIAL_PRODUCTS: Product[] = [
       production_timestamp: "2026-05-08T09:10:00Z",
     },
     logistics_details: {
-      intended_destination: "Region I - Ilocos Norte",
-      current_warehouse_id: "WH-HOLD-BGS-01",
-      current_location_name: "BIR Customs Hold — NAIA Terminal 3",
-      shipment_id: "SHIP-99001122-A",
+      intended_destination: "Tokyo, Japan (Export)",
+      current_warehouse_id: "WH-EXPORT-MNL-04",
+      current_location_name: "Manila International Container Port — Export Yard",
+      shipment_id: "SHIP-EXP-99001122-A",
       movement_history: [
-        { id: 7, product_id: "PH-2026-ALC-339901", stage: "Factory Exit",       location: "Distillery Bulacan-07, Meycauayan",   coordinates: { lat: 14.7356, lng: 120.961  }, timestamp: "2026-05-08T11:00:00Z", status: "Released" },
-        { id: 8, product_id: "PH-2026-ALC-339901", stage: "Customs Clearance",  location: "Bureau of Customs, Manila Port Zone", coordinates: { lat: 14.5839, lng: 120.9716 }, timestamp: "2026-05-09T08:45:00Z", status: "Transferred" },
-        { id: 9, product_id: "PH-2026-ALC-339901", stage: "Flagged — Geofence", location: "NAIA Terminal 3, Pasay City",         coordinates: { lat: 14.5086, lng: 121.0194 }, timestamp: "2026-05-10T14:20:00Z", status: "Held" },
+        { id: 7, product_id: "PH-2026-ALC-339901", stage: "Factory Exit",        location: "Distillery Bulacan-07, Meycauayan",        coordinates: { lat: 14.7356, lng: 120.961  }, timestamp: "2026-05-08T11:00:00Z", status: "Released" },
+        { id: 8, product_id: "PH-2026-ALC-339901", stage: "Export Customs",      location: "Bureau of Customs, Manila Port Zone",      coordinates: { lat: 14.5839, lng: 120.9716 }, timestamp: "2026-05-09T08:45:00Z", status: "Transferred" },
+        { id: 9, product_id: "PH-2026-ALC-339901", stage: "Export Container Yard", location: "Manila Int'l Container Port, Tondo",     coordinates: { lat: 14.6042, lng: 120.9636 }, timestamp: "2026-05-10T14:20:00Z", status: "In-Transit (Sea)" },
       ],
     },
     product_specs: {
       brand: "Gran Reserva",
       variant: "Premium Rum 750mL",
       sku_code: "SKU-1190",
-      intended_market: "Philippines Domestic",
+      intended_market: "Export Only",
     },
-    reports: [
-      { id: 1, product_id: "PH-2026-ALC-339901", reason: "Wrong location label", timestamp: "2026-05-10T14:25:00Z" },
-    ],
+    reports: [],
     created_at: "2026-05-08T08:00:00Z",
   },
 ];

@@ -8,6 +8,12 @@ export const REPORT_REASONS = [
 ] as const;
 export type ReportReason = (typeof REPORT_REASONS)[number];
 
+export type MarketKind = "LOCAL" | "EXPORT";
+
+export function getMarketKind(intendedMarket: string): MarketKind {
+  return intendedMarket === "Philippines Domestic" ? "LOCAL" : "EXPORT";
+}
+
 export interface Coordinates {
   lat: number;
   lng: number;
