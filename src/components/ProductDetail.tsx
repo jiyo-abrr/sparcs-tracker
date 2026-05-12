@@ -5,8 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
   MapPin, Package, Building2, Hash, FileText, Clock, Factory,
-  ShieldCheck, ShieldAlert, AlertTriangle, CheckCircle2, XCircle,
-  Truck, Globe,
+  AlertTriangle, Flag, Truck, Globe,
 } from "lucide-react";
 import LocationMap from "./LocationMap";
 
@@ -44,8 +43,7 @@ interface Props {
 }
 
 export default function ProductDetail({ product }: Props) {
-  const { uid_details, origin_details, logistics_details, product_specs, security_alerts } = product;
-  const anyAlert = security_alerts.is_duplicate_detected || security_alerts.reported_stolen || security_alerts.geofencing_violation;
+  const { uid_details, origin_details, logistics_details, product_specs, reports } = product;
   const history = logistics_details.movement_history;
 
   return (
@@ -62,24 +60,6 @@ export default function ProductDetail({ product }: Props) {
           {product.status}
         </Badge>
       </div>
-
-      {/* ── Security alert banner ── */}
-      {anyAlert ? (
-        <div className="flex items-start gap-3 rounded-xl border border-destructive/40 bg-destructive/5 px-4 py-3">
-          <ShieldAlert size={18} className="text-destructive shrink-0 mt-0.5" />
-          <div className="space-y-1 text-sm">
-            <p className="font-semibold text-destructive">Security Alert</p>
-            {security_alerts.is_duplicate_detected && <p className="text-muted-foreground">· Duplicate stamp detected</p>}
-            {security_alerts.reported_stolen        && <p className="text-muted-foreground">· Reported stolen</p>}
-            {security_alerts.geofencing_violation   && <p className="text-muted-foreground">· Geofencing violation</p>}
-          </div>
-        </div>
-      ) : (
-        <div className="flex items-center gap-2 rounded-xl border border-green-500/30 bg-green-500/5 px-4 py-2.5 text-sm text-green-700">
-          <ShieldCheck size={16} className="shrink-0" />
-          No security alerts
-        </div>
-      )}
 
       <Separator />
 
@@ -158,29 +138,43 @@ export default function ProductDetail({ product }: Props) {
           )}
         </div>
 
-        {/* Security alerts detail */}
-        <div className="rounded-lg border bg-muted/20 p-3 space-y-2">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Security Alerts</p>
-          {[
-            { label: "Duplicate Detected",   flag: security_alerts.is_duplicate_detected },
-            { label: "Reported Stolen",       flag: security_alerts.reported_stolen },
-            { label: "Geofencing Violation",  flag: security_alerts.geofencing_violation },
-          ].map(({ label, flag }) => (
-            <div key={label} className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">{label}</span>
-              {flag
-                ? <XCircle size={15} className="text-destructive" />
-                : <CheckCircle2 size={15} className="text-green-500" />
-              }
-            </div>
-          ))}
-          {(security_alerts.last_scanned_coordinates.lat !== 0 || security_alerts.last_scanned_coordinates.lng !== 0) && (
-            <div className="text-xs text-muted-foreground font-mono pt-1">
-              Last scan: {security_alerts.last_scanned_coordinates.lat.toFixed(5)}, {security_alerts.last_scanned_coordinates.lng.toFixed(5)}
-              {security_alerts.distance_deviation_km > 0 && ` · ${security_alerts.distance_deviation_km.toFixed(2)} km deviation`}
-            </div>
-          )}
-        </div>
+      </section>
+
+      <Separator />
+
+      {/* ── Reports ── */}
+      <section>
+        <h3 className="text-sm font-semibold flex items-center gap-1.5 mb-3">
+          <Flag size={14} />
+          Reports
+          <span className="ml-auto text-xs text-muted-foreground font-normal">
+            {reports.length} report{reports.length !== 1 ? "s" : ""}
+          </span>
+        </h3>
+
+        {reports.length > 0 ? (
+          <div className="space-y-2">
+            {reports.map((r) => (
+              <div
+                key={r.id}
+                className="flex items-start gap-2.5 rounded-lg border border-orange-400/40 bg-orange-50 px-3 py-2.5"
+              >
+                <AlertTriangle size={14} className="text-orange-600 shrink-0 mt-0.5" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-semibold text-orange-800">{r.reason}</p>
+                  <p className="text-xs text-orange-700/80 mt-0.5">
+                    {new Date(r.timestamp).toLocaleString('en-PH')}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center gap-2 py-6 text-center border rounded-lg bg-muted/20">
+            <Flag size={24} className="text-muted-foreground/40" />
+            <p className="text-sm text-muted-foreground">No reports filed.</p>
+          </div>
+        )}
       </section>
 
       <Separator />

@@ -11,7 +11,7 @@ import QRCodeDisplay from "@/components/QRCodeDisplay";
 import QRScanner from "@/components/QRScanner";
 import { Product } from "@/lib/types";
 import { useProducts, deleteProduct } from "@/lib/store";
-import { Package, ScanLine, LayoutDashboard, PackagePlus, ShieldAlert } from "lucide-react";
+import { Package, ScanLine, LayoutDashboard, PackagePlus, Flag } from "lucide-react";
 
 const STATUS_VARIANT: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
   VALID:   "default",
@@ -32,9 +32,7 @@ export default function Dashboard() {
     deleteProduct(id);
   }
 
-  const alertCount = products.filter(
-    (p) => p.security_alerts.is_duplicate_detected || p.security_alerts.reported_stolen || p.security_alerts.geofencing_violation
-  ).length;
+  const reportCount = products.reduce((sum, p) => sum + p.reports.length, 0);
 
   const DESKTOP_NAV: { id: Tab; label: string; icon: React.ReactNode }[] = [
     { id: "dashboard", label: "Products", icon: <LayoutDashboard size={20} /> },
@@ -61,10 +59,10 @@ export default function Dashboard() {
                 ? "No products registered yet."
                 : `${products.length} product${products.length !== 1 ? "s" : ""} tracked`}
             </p>
-            {alertCount > 0 && (
+            {reportCount > 0 && (
               <div className="flex items-center gap-1.5 mt-2 text-xs font-medium bg-white/20 rounded-full px-2.5 py-1 w-fit">
-                <ShieldAlert size={11} />
-                {alertCount} alert{alertCount !== 1 ? "s" : ""}
+                <Flag size={11} />
+                {reportCount} report{reportCount !== 1 ? "s" : ""}
               </div>
             )}
           </div>
@@ -134,10 +132,10 @@ export default function Dashboard() {
                     ? "No products registered yet."
                     : `${products.length} product${products.length !== 1 ? "s" : ""} tracked`}
                 </p>
-                {alertCount > 0 && (
+                {reportCount > 0 && (
                   <div className="flex items-center gap-1.5 mt-2 text-xs font-medium bg-white/20 rounded-full px-3 py-1 w-fit">
-                    <ShieldAlert size={12} />
-                    {alertCount} security alert{alertCount !== 1 ? "s" : ""}
+                    <Flag size={12} />
+                    {reportCount} report{reportCount !== 1 ? "s" : ""}
                   </div>
                 )}
               </div>

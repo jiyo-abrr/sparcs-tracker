@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
-import { QrCode, MapPin, Trash2, Package, AlertTriangle, ArrowRight } from "lucide-react";
+import { QrCode, MapPin, Trash2, Package, Flag, ArrowRight } from "lucide-react";
 
 const STATUS_VARIANT: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
   VALID:    "default",
@@ -15,27 +15,12 @@ const STATUS_VARIANT: Record<string, "default" | "secondary" | "destructive" | "
   FLAGGED:  "secondary",
 };
 
-function AlertBadges({ product }: { product: Product }) {
-  const { is_duplicate_detected, reported_stolen, geofencing_violation } = product.security_alerts;
-  if (!is_duplicate_detected && !reported_stolen && !geofencing_violation) return null;
+function ReportBadge({ product }: { product: Product }) {
+  if (product.reports.length === 0) return null;
   return (
-    <div className="flex gap-1 flex-wrap">
-      {is_duplicate_detected && (
-        <span className="inline-flex items-center gap-0.5 text-[10px] font-medium text-destructive border border-destructive/40 rounded px-1 py-0.5">
-          <AlertTriangle size={9} /> Dupe
-        </span>
-      )}
-      {reported_stolen && (
-        <span className="inline-flex items-center gap-0.5 text-[10px] font-medium text-destructive border border-destructive/40 rounded px-1 py-0.5">
-          <AlertTriangle size={9} /> Stolen
-        </span>
-      )}
-      {geofencing_violation && (
-        <span className="inline-flex items-center gap-0.5 text-[10px] font-medium text-orange-600 border border-orange-400/40 rounded px-1 py-0.5">
-          <AlertTriangle size={9} /> Geo
-        </span>
-      )}
-    </div>
+    <span className="inline-flex items-center gap-0.5 text-[10px] font-medium text-orange-600 border border-orange-400/40 rounded px-1 py-0.5">
+      <Flag size={9} /> {product.reports.length} report{product.reports.length !== 1 ? "s" : ""}
+    </span>
   );
 }
 
@@ -101,10 +86,10 @@ export default function ProductTable({ products, onViewQR, onDelete }: Props) {
                   <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Registered</p>
                   <p className="font-medium">{new Date(p.created_at).toLocaleDateString('en-PH')}</p>
                 </div>
-                {(p.security_alerts.is_duplicate_detected || p.security_alerts.reported_stolen || p.security_alerts.geofencing_violation) && (
+                {p.reports.length > 0 && (
                   <div className="col-span-2">
-                    <p className="text-[10px] uppercase tracking-wide text-muted-foreground mb-1">Alerts</p>
-                    <AlertBadges product={p} />
+                    <p className="text-[10px] uppercase tracking-wide text-muted-foreground mb-1">Reports</p>
+                    <ReportBadge product={p} />
                   </div>
                 )}
               </div>
@@ -137,7 +122,7 @@ export default function ProductTable({ products, onViewQR, onDelete }: Props) {
               <TableHead>Destination</TableHead>
               <TableHead>Status</TableHead>
               <TableHead><MapPin size={13} className="inline mr-1" />Moves</TableHead>
-              <TableHead>Alerts</TableHead>
+              <TableHead>Reports</TableHead>
               <TableHead>Registered</TableHead>
               <TableHead className="text-right">
                 <span className="flex items-center justify-end gap-1">Actions <ArrowRight size={11} className="text-muted-foreground/50" /></span>
@@ -171,7 +156,7 @@ export default function ProductTable({ products, onViewQR, onDelete }: Props) {
                     <Badge variant={STATUS_VARIANT[p.status] ?? "outline"}>{p.status}</Badge>
                   </TableCell>
                   <TableCell>{p.logistics_details.movement_history.length}</TableCell>
-                  <TableCell><AlertBadges product={p} /></TableCell>
+                  <TableCell><ReportBadge product={p} /></TableCell>
                   <TableCell className="text-xs text-muted-foreground">
                     {new Date(p.created_at).toLocaleDateString('en-PH')}
                   </TableCell>

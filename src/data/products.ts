@@ -39,13 +39,7 @@ export const INITIAL_PRODUCTS: Product[] = [
       sku_code: "SKU-5544",
       intended_market: "Philippines Domestic",
     },
-    security_alerts: {
-      is_duplicate_detected: false,
-      reported_stolen: false,
-      geofencing_violation: false,
-      last_scanned_coordinates: { lat: 10.3317, lng: 123.9311 },
-      distance_deviation_km: 0.01,
-    },
+    reports: [],
     created_at: "2026-05-10T08:30:00Z",
   },
   {
@@ -84,13 +78,7 @@ export const INITIAL_PRODUCTS: Product[] = [
       sku_code: "SKU-8821",
       intended_market: "Philippines Domestic",
     },
-    security_alerts: {
-      is_duplicate_detected: false,
-      reported_stolen: false,
-      geofencing_violation: false,
-      last_scanned_coordinates: { lat: 14.4081, lng: 121.0415 },
-      distance_deviation_km: 0.0,
-    },
+    reports: [],
     created_at: "2026-05-09T06:00:00Z",
   },
   {
@@ -130,13 +118,9 @@ export const INITIAL_PRODUCTS: Product[] = [
       sku_code: "SKU-1190",
       intended_market: "Philippines Domestic",
     },
-    security_alerts: {
-      is_duplicate_detected: false,
-      reported_stolen: false,
-      geofencing_violation: true,
-      last_scanned_coordinates: { lat: 14.5086, lng: 121.0194 },
-      distance_deviation_km: 38.5,
-    },
+    reports: [
+      { id: 1, product_id: "PH-2026-ALC-339901", reason: "Wrong location label", timestamp: "2026-05-10T14:25:00Z" },
+    ],
     created_at: "2026-05-08T08:00:00Z",
   },
 ];

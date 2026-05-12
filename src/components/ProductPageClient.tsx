@@ -9,8 +9,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import ProductDetail from "@/components/ProductDetail";
 import AddLocationForm from "@/components/AddLocationForm";
 import QRCodeDisplay from "@/components/QRCodeDisplay";
-import { useProduct, deleteProduct, useHasHydrated } from "@/lib/store";
-import { ArrowLeft, QrCode, ChevronDown, ChevronUp, Trash2 } from "lucide-react";
+import { addReport, deleteProduct, useHasHydrated, useProduct } from "@/lib/store";
+import { REPORT_REASONS, type ReportReason } from "@/lib/types";
+import { ArrowLeft, ChevronDown, ChevronUp, Flag, QrCode, Trash2 } from "lucide-react";
 
 const STATUS_VARIANT: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
   VALID:   "default",
@@ -28,12 +29,19 @@ export default function ProductPageClient({ productId }: Props) {
   const hydrated = useHasHydrated();
   const [showLogForm, setShowLogForm] = useState(false);
   const [showQR, setShowQR] = useState(false);
+  const [showReport, setShowReport] = useState(false);
 
   function handleDelete() {
     if (!product) return;
     if (!confirm("Delete this product and all its movement history?")) return;
     deleteProduct(product.uid_details.unique_id);
     router.push("/");
+  }
+
+  function handleReport(reason: ReportReason) {
+    if (!product) return;
+    addReport(product.uid_details.unique_id, reason);
+    setShowReport(false);
   }
 
   if (!hydrated) {
@@ -72,6 +80,13 @@ export default function ProductPageClient({ productId }: Props) {
           <h1 className="font-semibold text-sm truncate flex-1 text-center">{title}</h1>
 
           <div className="flex items-center gap-1">
+            <Button
+              size="icon" variant="ghost" title="Report issue"
+              className="text-orange-600 hover:text-orange-700"
+              onClick={() => setShowReport(true)}
+            >
+              <Flag size={18} />
+            </Button>
             <Button size="icon" variant="ghost" title="Show QR" onClick={() => setShowQR(true)}>
               <QrCode size={18} />
             </Button>
@@ -113,6 +128,34 @@ export default function ProductPageClient({ productId }: Props) {
           )}
         </div>
       </div>
+
+      <Dialog open={showReport} onOpenChange={setShowReport}>
+        <DialogContent className="w-[calc(100%-2rem)] sm:max-w-sm rounded-xl">
+          <DialogHeader>
+            <DialogTitle className="text-base flex items-center gap-2">
+              <Flag size={16} className="text-orange-600" /> Report Issue
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-2 space-y-2">
+            <p className="text-sm text-muted-foreground">
+              Select the reason for reporting this product. This will flag it for review.
+            </p>
+            <div className="flex flex-col gap-2 pt-1">
+              {REPORT_REASONS.map((reason) => (
+                <Button
+                  key={reason}
+                  variant="outline"
+                  className="justify-start gap-2 h-auto py-3"
+                  onClick={() => handleReport(reason)}
+                >
+                  <Flag size={14} className="text-orange-600 shrink-0" />
+                  <span className="text-sm">{reason}</span>
+                </Button>
+              ))}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={showQR} onOpenChange={setShowQR}>
         <DialogContent className="w-[calc(100%-2rem)] sm:max-w-sm rounded-xl">

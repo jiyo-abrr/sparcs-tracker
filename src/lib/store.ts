@@ -1,7 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { Product, MovementEntry, ProductStatus } from "@/lib/types";
+import { Product, MovementEntry, ProductReport, ProductStatus, ReportReason } from "@/lib/types";
 import { INITIAL_PRODUCTS } from "@/data/products";
 
 const STORAGE_KEY = "sparcs:products:v1";
@@ -125,13 +125,7 @@ export function createProduct(input: CreateProductInput): Product {
       sku_code: input.sku_code,
       intended_market: input.intended_market ?? "Philippines Domestic",
     },
-    security_alerts: {
-      is_duplicate_detected: false,
-      reported_stolen: false,
-      geofencing_violation: false,
-      last_scanned_coordinates: { lat: 0, lng: 0 },
-      distance_deviation_km: 0,
-    },
+    reports: [],
     created_at: new Date().toISOString(),
   };
   const next = [product, ...readStore()];
@@ -143,9 +137,6 @@ export type ProductPatch = Partial<{
   status: ProductStatus;
   current_warehouse_id: string;
   current_location_name: string;
-  is_duplicate_detected: boolean;
-  reported_stolen: boolean;
-  geofencing_violation: boolean;
 }>;
 
 export function updateProduct(id: string, patch: ProductPatch): Product | null {
@@ -160,12 +151,6 @@ export function updateProduct(id: string, patch: ProductPatch): Product | null {
         ...p.logistics_details,
         current_warehouse_id: patch.current_warehouse_id ?? p.logistics_details.current_warehouse_id,
         current_location_name: patch.current_location_name ?? p.logistics_details.current_location_name,
-      },
-      security_alerts: {
-        ...p.security_alerts,
-        is_duplicate_detected: patch.is_duplicate_detected ?? p.security_alerts.is_duplicate_detected,
-        reported_stolen: patch.reported_stolen ?? p.security_alerts.reported_stolen,
-        geofencing_violation: patch.geofencing_violation ?? p.security_alerts.geofencing_violation,
       },
     };
     return updated;
@@ -213,10 +198,33 @@ export function addMovement(productId: string, input: AddMovementInput): Product
         ...p.logistics_details,
         movement_history: [...p.logistics_details.movement_history, entry],
       },
-      security_alerts: {
-        ...p.security_alerts,
-        last_scanned_coordinates: { lat: input.lat, lng: input.lng },
-      },
+    };
+    return updated;
+  });
+  if (updated) writeStore(next);
+  return updated;
+}
+
+export function addReport(productId: string, reason: ReportReason): Product | null {
+  const products = readStore();
+  const maxId = products
+    .flatMap((p) => p.reports.map((r) => r.id))
+    .reduce((a, b) => Math.max(a, b), 0);
+
+  const report: ProductReport = {
+    id: maxId + 1,
+    product_id: productId,
+    reason,
+    timestamp: new Date().toISOString(),
+  };
+
+  let updated: Product | null = null;
+  const next = products.map((p) => {
+    if (p.uid_details.unique_id !== productId) return p;
+    updated = {
+      ...p,
+      status: "FLAGGED",
+      reports: [...p.reports, report],
     };
     return updated;
   });
