@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import ProductDetail from "@/components/ProductDetail";
 import QRCodeDisplay from "@/components/QRCodeDisplay";
-import { addReport, deleteProduct, useHasHydrated, useProduct } from "@/lib/store";
+import { deleteProduct, useHasHydrated, useProduct } from "@/lib/store";
 import { REPORT_REASONS, type ReportReason } from "@/lib/types";
 import { ArrowLeft, CheckCircle2, Flag, Loader2, QrCode, Trash2 } from "lucide-react";
 
@@ -36,20 +36,14 @@ export default function ProductPageClient({ productId }: Props) {
     router.push("/");
   }
 
-  async function handleReport(reason: ReportReason) {
+  async function handleReport(_reason: ReportReason) {
     if (!product || reportState !== "idle") return;
-    const id = product.uid_details.unique_id;
     setReportState("submitting");
     await new Promise((r) => setTimeout(r, 1400));
     setReportState("success");
-    await new Promise((r) => setTimeout(r, 1200));
-    addReport(id, reason);
+    await new Promise((r) => setTimeout(r, 1400));
     setShowReport(false);
     setReportState("idle");
-    router.replace(`/products/${id}`);
-    if (typeof window !== "undefined") {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
   }
 
   function handleReportDialogChange(open: boolean) {
