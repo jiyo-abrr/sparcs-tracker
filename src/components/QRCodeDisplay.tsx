@@ -18,25 +18,27 @@ export default function QRCodeDisplay({ product, size = 256, baseUrl }: Props) {
 
   useEffect(() => {
     if (!canvasRef.current) return;
-    // Generate at a high pixel resolution to ensure crisp printing
-    // at small physical sizes (0.7 inches) and reduce margin.
+    // Generate at very high resolution (2048px) for pristine print quality.
+    // Use 'L' error correction for small prints (0.75 in): it creates fewer, 
+    // larger data modules which are much easier for phone cameras to resolve.
     QRCode.toCanvas(canvasRef.current, url, {
-      width: 1024,
-      margin: 1,
-      errorCorrectionLevel: "M",
+      width: 2048,
+      margin: 2,
+      errorCorrectionLevel: "L",
       color: { dark: "#000000", light: "#ffffff" },
     });
   }, [url]);
 
   return (
-    <div className="flex flex-col items-center gap-2 print:gap-0 print:m-0">
-      <canvas 
-        ref={canvasRef} 
-        style={{ width: size, height: size, maxWidth: "100%" }}
-        className="print:!w-[0.7in] print:!h-[0.7in]" 
-      />
-      <p className="text-xs text-muted-foreground font-mono print:text-[6px] print:leading-tight">{id}</p>
-      <p className="text-[10px] text-muted-foreground/70 break-all text-center max-w-[240px] print:hidden">{url}</p>
+    <div className="flex flex-col items-center gap-2">
+      <div style={{ width: size, height: size }} className="flex justify-center items-center overflow-hidden">
+        <canvas 
+          ref={canvasRef} 
+          className="!w-full !h-full object-contain"
+        />
+      </div>
+      <p className="text-xs text-muted-foreground font-mono">{id}</p>
+      <p className="text-[10px] text-muted-foreground/70 break-all text-center max-w-[240px]">{url}</p>
     </div>
   );
 }
