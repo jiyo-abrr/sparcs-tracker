@@ -45,21 +45,21 @@ export const INITIAL_PRODUCTS: Product[] = [
   {
     status: "VALID",
     uid_details: {
-      unique_id: "PH-2026-BVG-882034",
+      unique_id: "PH-2026-TBC-882034",
       activation_date: "2026-05-09T06:00:00Z",
       tax_status: "Paid",
       security_hash: "2ac862e1271af5b234dc58ddae4862271a882ea1",
     },
     origin_details: {
-      manufacturer: "PhilBev Industries Inc.",
-      factory_name: "Bottling Plant Laguna-03",
+      manufacturer: "Golden Leaf Tobacco Inc.",
+      factory_name: "Plant Alpha-01",
       factory_location: {
         city: "Santa Rosa",
         country: "Philippines",
         facility_id: "FAC-30145",
         coordinates: { lat: 14.2867, lng: 121.1114 },
       },
-      production_line: "Line_02_BeverageFill",
+      production_line: "Line_02_HighSpeed",
       production_timestamp: "2026-05-09T07:20:00Z",
     },
     logistics_details: {
@@ -68,13 +68,13 @@ export const INITIAL_PRODUCTS: Product[] = [
       current_location_name: "Muntinlupa South Distribution Center",
       shipment_id: "SHIP-22334455-C",
       movement_history: [
-        { id: 5, product_id: "PH-2026-BVG-882034", stage: "Factory Exit",              location: "Bottling Plant Laguna-03, Santa Rosa", coordinates: { lat: 14.2867, lng: 121.1114 }, timestamp: "2026-05-09T10:00:00Z", status: "Released" },
-        { id: 6, product_id: "PH-2026-BVG-882034", stage: "Regional Distribution Hub", location: "Muntinlupa South DC, Metro Manila",    coordinates: { lat: 14.4081, lng: 121.0415 }, timestamp: "2026-05-10T06:30:00Z", status: "Transferred" },
+        { id: 5, product_id: "PH-2026-TBC-882034", stage: "Factory Exit",              location: "Plant Alpha-01, Santa Rosa", coordinates: { lat: 14.2867, lng: 121.1114 }, timestamp: "2026-05-09T10:00:00Z", status: "Released" },
+        { id: 6, product_id: "PH-2026-TBC-882034", stage: "Regional Distribution Hub", location: "Muntinlupa South DC, Metro Manila",    coordinates: { lat: 14.4081, lng: 121.0415 }, timestamp: "2026-05-10T06:30:00Z", status: "Transferred" },
       ],
     },
     product_specs: {
-      brand: "ClearSpring",
-      variant: "Mineral Water 500mL",
+      brand: "Golden Leaf",
+      variant: "Classic Red 20s",
       sku_code: "SKU-8821",
       intended_market: "Philippines Domestic",
     },
@@ -84,21 +84,21 @@ export const INITIAL_PRODUCTS: Product[] = [
   {
     status: "VALID",
     uid_details: {
-      unique_id: "PH-2026-ALC-339901",
+      unique_id: "PH-2026-TBC-339901",
       activation_date: "2026-05-08T08:00:00Z",
       tax_status: "Paid",
       security_hash: "8f3871896996be799bf751aee0b7d48728907704",
     },
     origin_details: {
-      manufacturer: "Distileria del Norte Corp.",
-      factory_name: "Distillery Bulacan-07",
+      manufacturer: "Silver Cloud Tobacco Corp.",
+      factory_name: "Plant Omega-05",
       factory_location: {
         city: "Meycauayan",
         country: "Philippines",
         facility_id: "FAC-55902",
         coordinates: { lat: 14.7356, lng: 120.961 },
       },
-      production_line: "Line_01_Spirits",
+      production_line: "Line_01_Rolling",
       production_timestamp: "2026-05-08T09:10:00Z",
     },
     logistics_details: {
@@ -107,14 +107,14 @@ export const INITIAL_PRODUCTS: Product[] = [
       current_location_name: "Manila International Container Port — Export Yard",
       shipment_id: "SHIP-EXP-99001122-A",
       movement_history: [
-        { id: 7, product_id: "PH-2026-ALC-339901", stage: "Factory Exit",        location: "Distillery Bulacan-07, Meycauayan",        coordinates: { lat: 14.7356, lng: 120.961  }, timestamp: "2026-05-08T11:00:00Z", status: "Released" },
-        { id: 8, product_id: "PH-2026-ALC-339901", stage: "Export Customs",      location: "Bureau of Customs, Manila Port Zone",      coordinates: { lat: 14.5839, lng: 120.9716 }, timestamp: "2026-05-09T08:45:00Z", status: "Transferred" },
-        { id: 9, product_id: "PH-2026-ALC-339901", stage: "Export Container Yard", location: "Manila Int'l Container Port, Tondo",     coordinates: { lat: 14.6042, lng: 120.9636 }, timestamp: "2026-05-10T14:20:00Z", status: "In-Transit (Sea)" },
+        { id: 7, product_id: "PH-2026-TBC-339901", stage: "Factory Exit",        location: "Plant Omega-05, Meycauayan",        coordinates: { lat: 14.7356, lng: 120.961  }, timestamp: "2026-05-08T11:00:00Z", status: "Released" },
+        { id: 8, product_id: "PH-2026-TBC-339901", stage: "Export Customs",      location: "Bureau of Customs, Manila Port Zone",      coordinates: { lat: 14.5839, lng: 120.9716 }, timestamp: "2026-05-09T08:45:00Z", status: "Transferred" },
+        { id: 9, product_id: "PH-2026-TBC-339901", stage: "Export Container Yard", location: "Manila Int'l Container Port, Tondo",     coordinates: { lat: 14.6042, lng: 120.9636 }, timestamp: "2026-05-10T14:20:00Z", status: "In-Transit (Sea)" },
       ],
     },
     product_specs: {
-      brand: "Gran Reserva",
-      variant: "Premium Rum 750mL",
+      brand: "Silver Cloud",
+      variant: "Lights 100s",
       sku_code: "SKU-1190",
       intended_market: "Export Only",
     },
